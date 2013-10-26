@@ -4,3 +4,13 @@ body {
   font-size: 10pt;
   background: #ffff;
 }
+
+#scorebox{
+	height: 100px;
+	width:300px;
+	z-index: 88;
+	margin-top: 100px;
+	position: relative;
+
+}
+#canvas { background:url(./images/background.jpg) }
