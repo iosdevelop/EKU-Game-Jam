@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -26,12 +27,14 @@
         
         var player = {
           color: "#00A",
-          x: 50,
-          y: 270,
+          x: 1978,
+          y: 1338,
           width: 20,
           height: 30,
           lastMove: 0,
-          health: 100*100,
+          motion: 5,
+          health: 50 * 5,
+          active: 1,
           draw: function()  {
             canvas.fillStyle = this.color;
             canvas.fillRect(this.x, this.y, this.width, this.height);
@@ -184,6 +187,19 @@
 		          }
 	          }
           }
+          
+          I.bump = function(J) {
+          	if(I.x > J.x){
+          		I.x += 2;
+          	} else {
+          		I.x -= 2;
+          	}
+          	if(I.y > J.y){
+          		I.y += 2;
+          	} else {
+          		I.y -= 2;
+          	}
+          }//end bump
         
           I.explode = function() {
             Sound.play("explosion");
@@ -194,6 +210,27 @@
         
           return I;
         };
+/*        
+        var obstacles = [];
+        
+        function obstacle(I) {
+          	I = I || {};
+        
+        	I.x = 0;
+        	I.y = 0;
+        	
+        	I.height = 71;
+        	I.width = 74;
+        };
+        
+        /// begin obstacle hardcode spree
+        
+        // trees
+        obstacles.push(obstacle({
+            I.x = 274,
+        	I.y = 250
+          }));
+        */
         
         var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
           "' height='" + CANVAS_HEIGHT + "'></canvas");
@@ -206,64 +243,68 @@
         }, 1000/FPS);
         
         function update() {
+        	if(player.health <= 0){
+          		player.active = 0;
+          		player.motion = 0;
+          	} 
         
-          if(keydown.space) {
-            player.shoot();
-          }
-        
-          if(keydown.left) {
-            player.x -= 5;
-            player.lastMove = 3;
-          }
-        
-          if(keydown.right) {
-            player.x += 5;
-            player.lastMove = 1;
-          }
-          
-          if(keydown.up) {
-           player.y -= 5 
-           player.lastMove = 0;
-          }
-          if(keydown.down) {
-           player.y += 5 
-           player.lastMove = 2;
-
-
-          }
-        
-        
-          player.x = player.x.clamp(0, CANVAS_WIDTH  - player.width);
-          player.y = player.y.clamp(0, CANVAS_HEIGHT - player.height);
-          
-          playerBullets.forEach(function(bullet) {
-            bullet.update();
-          });
-        
-          playerBullets = playerBullets.filter(function(bullet) {
-            return bullet.active;
-          });
-          
-          enemies.forEach(function(enemy) {
-            enemy.weakHome(player.x, player.y);
-            enemy.update();
-          });
-        
-          enemies = enemies.filter(function(enemy) {
-            return enemy.active;
-          });
-        
-          handleCollisions();
-        
-          if(Math.random() < 0.1) {
-            enemies.push(Enemy());
-          }
+         if(player.active == 1){
+	          if(keydown.space) {
+	            player.shoot();
+	          }
+	        
+	          if(keydown.left) {
+	            player.x -= player.motion;
+	            player.lastMove = 3;
+	          }
+	          if(keydown.right) {
+	            player.x += player.motion;
+	            player.lastMove = 1;
+	          }
+	          if(keydown.up) {
+	           player.y -= player.motion; 
+	           player.lastMove = 0;
+	          }
+	          if(keydown.down) {
+	           player.y += player.motion; 
+	           player.lastMove = 2;
+	          }
+		}
+	          player.x = player.x.clamp(0, CANVAS_WIDTH  - player.width);
+	          player.y = player.y.clamp(0, CANVAS_HEIGHT - player.height);
+	          
+	          document.getElementById("scorebox").innerHTML = player.health + ' (x,y) '+ player.x + ', ' + player.y;
+	          
+	          playerBullets.forEach(function(bullet) {
+	            bullet.update();
+	          });
+	        
+	          playerBullets = playerBullets.filter(function(bullet) {
+	            return bullet.active;
+	          });
+	          
+	          enemies.forEach(function(enemy) {
+	            enemy.weakHome(player.x, player.y);
+	            enemy.update();
+	          });
+	        
+	          enemies = enemies.filter(function(enemy) {
+	            return enemy.active;
+	          });
+	        
+	          handleCollisions();
+	        
+	          if(Math.random() < 0.1) {
+	            enemies.push(Enemy());
+	          }
         }
         
         player.shoot = function() {
           Sound.play("shoot");
         
-          var bulletPosition = this.midpoint();
+          var bulletPosition = player.midpoint();
+        
+//          document.getElementById("scorebox").innerHTML = 'pop!';
         
           playerBullets.push(Bullet({
             speed: 20,
@@ -275,8 +316,8 @@
         
         player.midpoint = function() {
           return {
-            x: this.x + this.width/2,
-            y: this.y + this.height/2
+            x: this.x + this.width/6,
+            y: this.y + this.height/6
           };
         };
         
@@ -313,14 +354,34 @@
           enemies.forEach(function(enemy) {
             if(collides(enemy, player)) {
             //  enemy.explode();
-              player.explode();
+              player.health -= 3;
+              //player.explode(); // seems to cause slowdowns, pulling contents into here:
             }
+            
+            // successful collision detection and bumping
+            // created unacceptable lag in game
+            /*
+            for(i = 0; enemies.length > i ;i++){
+	            for(j = 0; enemies.length > j ; j++){
+		            if( i != j){
+		            	if(collides(enemies[i], enemies[j])){
+		            		enemies[i].bump(enemies[j]);
+		            	}//end if collide
+		            }//end self collide check
+            	}//end j for
+            }//end i for
+            */
+            
           });
         }
         
         player.explode = function() {
-          this.active = false;
-          player.health -= 3;
+          if(health < 0){
+          	player.active = false;
+          	player.motion = 0;
+          }
+          document.getElementById("scorebox").innerHTML = 'whatever';
+          
           // Extra Credit: Add an explosion graphic and then end the game
         };
         
@@ -336,8 +397,6 @@
       //]]>
     </script>
     
-    <div id="scorebox">
-    contents
-    </div>
+    <div id="scorebox" contenteditable="true">holder</div>
   </body>
 </html>
