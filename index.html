@@ -1,13 +1,9 @@
- <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!DOCTYPE html>
 <html>
   <head>
-<<<<<<< HEAD
-    <title>Scary EKU Game Jam</title>
+    <title>EKU Game Jam</title>
     <link href="./stylesheets/screen.css" media="all" rel="stylesheet" type="text/css"/>
-=======
-    <title>EKU Game Jam based on Space Demo</title>
-    <link href="/stylesheets/screen.css" media="all" rel="stylesheet" type="text/css"/>
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
     <script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
     
     <script language="javascript" src="./javascripts/jquery.hotkeys.js" type="text/javascript"></script>
@@ -15,15 +11,18 @@
     <script language="javascript" src="./javascripts/util.js" type="text/javascript"></script>
     <script language="javascript" src="./javascripts/sprite.js" type="text/javascript"></script>
     <script language="javascript" src="./javascripts/sound.js" type="text/javascript"></script>
+    <script language="javascript" src="./javascripts/html5-canvas-game-character-2.js" type="text/javascript"></script>
+    <script language="javascript" src="./javascripts/excanvas.js" type="text/javascript"></script>
+
+
     
   </head>
   <body>
     <h1>EKU Game Jam</h1>
-    <div id="scorebox"><h2>Test 1000</h2></div>
     <script type='text/javascript'>
       //<![CDATA[
-        var CANVAS_WIDTH = 900;
-        var CANVAS_HEIGHT = 620;
+        var CANVAS_WIDTH = 1939;
+        var CANVAS_HEIGHT = 1200;
         var FPS = 30;
         
         var player = {
@@ -33,15 +32,18 @@
           width: 20,
           height: 30,
           lastMove: 0,
+          health: 100*100,
           draw: function()  {
             canvas.fillStyle = this.color;
             canvas.fillRect(this.x, this.y, this.width, this.height);
           }
         };
         
+//        document.getElementById("scorebox").innerHTML = "Health is "+player.health + " position is "+player.x+", "+player.y;
+        
         var playerBullets = [];
         
-        function Bullet(I, directionIn) {
+        function Bullet(I) {
           I.active = true;
         
           //Up, default
@@ -49,39 +51,26 @@
           I.yVelocity = -I.speed;
           
           I.width = 10;
-          I.height = 43;
+          I.height = 10;
           I.color = "#000";
           
-          if(directionIn == 1){
-<<<<<<< HEAD
-            //right
-            I.xVelocity = +I.speed;
-            I.yVelocity = 0;
+   //       I.directionIn = 0;
+          
+          
+          if(I.directionIn == 1){
+         //right
+         I.xVelocity = +I.speed;
+         I.yVelocity = 0;
           }
-          if(directionIn == 2){
-            //down
-            I.xVelocity = -I.speed;
-            I.yVelocity = 0;
+          if(I.directionIn == 3){
+         //down
+         I.xVelocity = -I.speed;
+         I.yVelocity = 0;
           }
-          if(directionIn == 3){
-              //left
-            I.xVelocity = 0;
-            I.yVelocity = +I.speed;
-=======
-	          //right
-	          I.xVelocity = +I.speed;
-	          I.yVelocity = 0;
-          }
-          if(directionIn == 2){
-	          //down
-	          I.xVelocity = -I.speed;
-	          I.yVelocity = 0;
-          }
-          if(directionIn == 3){
-          	  //left
-	          I.xVelocity = 0;
-	          I.yVelocity = +I.speed;
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
+          if(I.directionIn == 2){
+           //left
+         I.xVelocity = 0;
+         I.yVelocity = +I.speed;
           }
         
           I.inBounds = function() {
@@ -120,9 +109,9 @@
           I.color = "#A2B";
         
           I.x = CANVAS_WIDTH / 4 + Math.random() * CANVAS_WIDTH / 2;
-          I.y = 0;
+          I.y = CANVAS_WIDTH / 4 + Math.random() * CANVAS_WIDTH / 2;
           I.xVelocity = 0
-          I.yVelocity = 11;
+          I.yVelocity = 0;
         
           I.width = 32;
           I.height = 32;
@@ -140,33 +129,18 @@
         
           I.update = function() {
           
-<<<<<<< HEAD
-            if ( I.xVelocity >= 6 ){
-              I.xVelocity = 6;
-            }
-            if ( I.xVelocity <= -6 ){
-              I.xVelocity = -6;
-            }
-            if ( I.yVelocity >= 6 ){
-              I.yVelocity = 6;
-            }
-            if ( I.yVelocity <= -6 ){
-              I.yVelocity = -6;
-            }
-=======
-          	if ( I.xVelocity >= 6 ){
-          		I.xVelocity = 6;
-          	}
-          	if ( I.xVelocity <= -6 ){
-          		I.xVelocity = -6;
-          	}
-          	if ( I.yVelocity >= 6 ){
-          		I.yVelocity = 6;
-          	}
-          	if ( I.yVelocity <= -6 ){
-          		I.yVelocity = -6;
-          	}
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
+          if ( I.xVelocity >= 4 ){
+          I.xVelocity = 4;
+          }
+          if ( I.xVelocity <= -4 ){
+          I.xVelocity = -4;
+          }
+          if ( I.yVelocity >= 4 ){
+          I.yVelocity = 4;
+          }
+          if ( I.yVelocity <= -4 ){
+          I.yVelocity = -4;
+          }
           
             I.x += I.xVelocity;
             I.y += I.yVelocity;
@@ -180,33 +154,36 @@
           
           I.home = function(argX , argY) {
           // homes in on the given coordinates
-<<<<<<< HEAD
-            if (argX > I.x){
-              I.xVelocity += 2;
-            }
-            if (argX < I.x){
-              I.xVelocity -= 2;
-            }
-            if (argY > I.y){
-              I.yVelocity += 2;
-            }
-            if (argY < I.y){
-              I.yVelocity -= 2;
-            }
-=======
-          	if (argX > I.x){
-          		I.xVelocity += 2;
-          	}
-          	if (argX < I.x){
-          		I.xVelocity -= 2;
-          	}
-          	if (argY > I.y){
-          		I.yVelocity += 2;
-          	}
-          	if (argY < I.y){
-          		I.yVelocity -= 2;
-          	}
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
+	          if (argX > I.x){
+	          	I.xVelocity += 2;
+	          }
+	          if (argX < I.x){
+	          	I.xVelocity -= 2;
+	          }
+	          if (argY > I.y){
+	          	I.yVelocity += 2;
+	          }
+	          if (argY < I.y){
+	          	I.yVelocity -= 2;
+	          }
+          }
+          
+          I.weakHome = function(argX , argY) {
+          // homes in on the given coordinates
+	          if ( Math.random() < 0.1) {
+		          if (argX > I.x){
+		          	I.xVelocity += 1;
+		          }
+		          if (argX < I.x){
+		          	I.xVelocity -= 1;
+		          }
+		          if (argY > I.y){
+		          	I.yVelocity += 1;
+		          }
+		          if (argY < I.y){
+		          	I.yVelocity -= 1;
+		          }
+	          }
           }
         
           I.explode = function() {
@@ -230,6 +207,7 @@
         }, 1000/FPS);
         
         function update() {
+        
           if(keydown.space) {
             player.shoot();
           }
@@ -247,13 +225,6 @@
           if(keydown.up) {
            player.y -= 10 
            player.lastMove = 0;
-<<<<<<< HEAD
-=======
-          }
-          if(keydown.down) {
-           player.y += 10 
-           player.lastMove = 2;
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
           }
           if(keydown.down) {
            player.y += 10 
@@ -261,10 +232,6 @@
           }
         
         
-<<<<<<< HEAD
-=======
-        
->>>>>>> 182692722d92f344ab176d1d4cd9980ced1cec3b
           player.x = player.x.clamp(0, CANVAS_WIDTH  - player.width);
           player.y = player.y.clamp(0, CANVAS_HEIGHT - player.height);
           
@@ -277,7 +244,7 @@
           });
           
           enemies.forEach(function(enemy) {
-            enemy.home(player.x, player.y);
+            enemy.weakHome(player.x, player.y);
             enemy.update();
           });
         
@@ -298,16 +265,17 @@
           var bulletPosition = this.midpoint();
         
           playerBullets.push(Bullet({
-            speed: 5,
+            speed: 8,
             x: bulletPosition.x,
-            y: bulletPosition.y
+            y: bulletPosition.y, 
+            directionIn: player.lastMove
           }));
         };
         
         player.midpoint = function() {
           return {
-            x: this.x + this.width/2,
-            y: this.y + this.height/2
+            x: this.x + this.width/6,
+            y: this.y + this.height/6
           };
         };
         
@@ -343,7 +311,7 @@
         
           enemies.forEach(function(enemy) {
             if(collides(enemy, player)) {
-              enemy.explode();
+            //  enemy.explode();
               player.explode();
             }
           });
@@ -351,17 +319,24 @@
         
         player.explode = function() {
           this.active = false;
-          //Add an explosion graphic and then end the game
+          player.health -= 3;
+          // Extra Credit: Add an explosion graphic and then end the game
         };
         
-        player.sprite = Sprite("player");
-        
+        //player.sprite = Sprite("player");
+
+        player.character=Sprite("player");
+
         player.draw = function() {
-          this.sprite.draw(canvas, this.x, this.y);
+          //this.sprite.draw(canvas, this.x, this.y);
+          this.character.draw(canvas, this.x, this.y);
+
         };
       //]]>
     </script>
-
+    
+    <div id="scorebox">
+    contents
+    </div>
   </body>
-
 </html>

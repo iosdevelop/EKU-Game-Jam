@@ -2,18 +2,18 @@
 body {
   font-family: Verdana;
   font-size: 10pt;
-  background: url(../images/background.jpg);
-  background-repeat: no-repeat;
-  background-size: 1000px
+  background: #ffff;
+  background: url(./../images/background.jpg);
+  background-repeat: no-repeat; 
 }
 
 #scorebox{
-    height: 100px;
-    width: 300px;
-    z-index: 88;
-    margin-top: -46px;
-    position: relative;
-    margin-left: 900px;
+	height: 100px;
+	width: 300px;
+	z-index: 88;
+	margin-top: -630px;
+	position: relative;
+	margin-left: 800px;
 
 }
-#canvas 
+#canvas { background:url(./images/background.jpg) }
