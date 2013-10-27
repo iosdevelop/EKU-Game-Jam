@@ -27,7 +27,8 @@
           y: 270,
           width: 20,
           height: 30,
-          draw: function() {
+          lastMove: 0,
+          draw: function()  {
             canvas.fillStyle = this.color;
             canvas.fillRect(this.x, this.y, this.width, this.height);
           }
@@ -35,14 +36,32 @@
         
         var playerBullets = [];
         
-        function Bullet(I) {
+        function Bullet(I, directionIn) {
           I.active = true;
         
-          I.xVelocity = 054;
+          //Up, default
+          I.xVelocity = 0;
           I.yVelocity = -I.speed;
+          
           I.width = 10;
           I.height = 43;
           I.color = "#000";
+          
+          if(directionIn == 1){
+            //right
+            I.xVelocity = +I.speed;
+            I.yVelocity = 0;
+          }
+          if(directionIn == 2){
+            //down
+            I.xVelocity = -I.speed;
+            I.yVelocity = 0;
+          }
+          if(directionIn == 3){
+              //left
+            I.xVelocity = 0;
+            I.yVelocity = +I.speed;
+          }
         
           I.inBounds = function() {
             return I.x >= 0 && I.x <= CANVAS_WIDTH &&
@@ -82,7 +101,7 @@
           I.x = CANVAS_WIDTH / 4 + Math.random() * CANVAS_WIDTH / 2;
           I.y = 0;
           I.xVelocity = 0
-          I.yVelocity = 23;
+          I.yVelocity = 11;
         
           I.width = 32;
           I.height = 32;
@@ -99,15 +118,45 @@
           };
         
           I.update = function() {
+          
+            if ( I.xVelocity >= 6 ){
+              I.xVelocity = 6;
+            }
+            if ( I.xVelocity <= -6 ){
+              I.xVelocity = -6;
+            }
+            if ( I.yVelocity >= 6 ){
+              I.yVelocity = 6;
+            }
+            if ( I.yVelocity <= -6 ){
+              I.yVelocity = -6;
+            }
+          
             I.x += I.xVelocity;
             I.y += I.yVelocity;
         
-            I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
+            // I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
         
             I.age++;
         
             I.active = I.active && I.inBounds();
           };
+          
+          I.home = function(argX , argY) {
+          // homes in on the given coordinates
+            if (argX > I.x){
+              I.xVelocity += 2;
+            }
+            if (argX < I.x){
+              I.xVelocity -= 2;
+            }
+            if (argY > I.y){
+              I.yVelocity += 2;
+            }
+            if (argY < I.y){
+              I.yVelocity -= 2;
+            }
+          }
         
           I.explode = function() {
             Sound.play("explosion");
@@ -119,7 +168,7 @@
           return I;
         };
         
-        var canvasElement = $("<canvas width='" + CANVAS_WIDTH +
+        var canvasElement = $("<canvas width='" + CANVAS_WIDTH + 
           "' height='" + CANVAS_HEIGHT + "'></canvas");
         var canvas = canvasElement.get(0).getContext("2d");
         canvasElement.appendTo('body');
@@ -136,13 +185,26 @@
         
           if(keydown.left) {
             player.x -= 10;
+            player.lastMove = 3;
           }
         
           if(keydown.right) {
             player.x += 10;
+            player.lastMove = 1;
+          }
+          
+          if(keydown.up) {
+           player.y -= 10 
+           player.lastMove = 0;
+          }
+          if(keydown.down) {
+           player.y += 10 
+           player.lastMove = 2;
           }
         
-          player.x = player.x.clamp(0, CANVAS_WIDTH - player.width);
+        
+          player.x = player.x.clamp(0, CANVAS_WIDTH  - player.width);
+          player.y = player.y.clamp(0, CANVAS_HEIGHT - player.height);
           
           playerBullets.forEach(function(bullet) {
             bullet.update();
@@ -153,6 +215,7 @@
           });
           
           enemies.forEach(function(enemy) {
+            enemy.home(player.x, player.y);
             enemy.update();
           });
         
@@ -236,19 +299,7 @@
         };
       //]]>
     </script>
+
   </body>
+
 </html>
-
-    Status
-    API
-    Training
-    Shop
-    Blog
-    About
-
-    © 2013 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Contact
-
